@@ -43,8 +43,17 @@ function App() {
     ELSE do nothing
   */
   const addTask = () => {
-    // START EDITING
-    // END EDITING
+    const newTask = {
+      id: uuidv4(),
+        title: title,
+        description: description,
+        completed: false, // Task should start as NOT COMPLETED
+        dueDate: dueDate
+    }
+    setTasks([...tasks, newTask]);
+    setTitle("");
+    setDescription("");
+    setDueDate("")
   };
 
   /*
@@ -60,8 +69,13 @@ function App() {
     HINT HINT NUDGE NUDGE: I'm getting some Week 4 HW flashbacks...are you?
   */
   const toggleCompletion = (id) => {
-    // START EDITING
-    // END EDITING
+    setTasks(tasks.map( elem => {
+      if (elem.id === id) {
+       return elem = {...elem, completed: !elem.completed }
+      }
+      return elem;
+    }))
+    console.log(tasks);
   };
   
   /*
@@ -96,8 +110,16 @@ function App() {
     component to the result of calling calculateProgress.
   */
   const calculateProgress = () => {
-    // START EDITING
-    // END EDITING
+    if (tasks.length == 0) {
+      return 0;
+    }
+      let completedTaskCount = 0
+      tasks.map(elem => {
+        if (elem.completed == true) {
+          completedTaskCount = completedTaskCount + 1;
+        }
+      })
+    return completedTaskCount / tasks.length * 100;
   };
 
   return (
@@ -116,16 +138,22 @@ function App() {
         <TextField
           required
           label="Title"
+          value = {title}
+          onChange = {(e) => setTitle(e.target.value)}
         />
         <TextField
           label="Description"
+          value = {description}
+          onChange = {(e) => setDescription(e.target.value)}
         />
         <TextField
           label="Due Date"
           type="date"
+          value = {dueDate}
+          onChange = {(e) => setDueDate(e.target.value)}
           InputLabelProps={{ shrink: true }}
         />
-        <Button variant="contained">
+        <Button variant="contained" onClick = {addTask}>
           Add Task
         </Button>
       </div>
@@ -141,6 +169,7 @@ function App() {
       <LinearProgress
         variant="determinate"
         sx={{ width: "100%", height: 10, borderRadius: 5, marginBottom: 2 }}
+        value = {calculateProgress()}
       />
       <TaskTable 
         tasks={incompleteOnly ? tasks.filter((task) => !task.completed) : tasks } 
